@@ -1,11 +1,11 @@
 //
 // Thanks go out to: https://www.motivateamazebegreat.com/2017/03/44-macgyver-inspirational-quotes-knowledge-resourcefulness.html
 //
-const macguyver = {
+import React, {useState, useEffect} from 'react'
 
-    intervalId: null,
-
-    quotes: [
+function MacGuyver({speed, startIdx}) {
+    
+    const quotes = [
         "A paperclip can be a wonderous thing. More times than I can remember, one of these has gotten me out of a tight spot.",
         "I say we trust our instincts, go with our gut. You can't program that. That's our edge.",
         "The great thing about a map: it gets you in and out of places in a lot different ways.",
@@ -52,23 +52,37 @@ const macguyver = {
         "The bag's not for what I take, Colson - it's for what I find along the way.",
         "We're all gonna die. The trick is not to rush it.",
         "If this works, it'll keep us from getting caught. If it doesn't, it'll keep us from getting old,"
-    ],
+    ]
     
-    rndQuote: function() {
-        return this.quotes[Math.floor(Math.random() * this.quotes.length)]
-    },
+    const [currentQuote, setCurrentQuote] = useState(quotes[startIdx])
+    const [intervalId, setIntervalId] = useState(null)
 
-    cycle: function(opts) {        
-        const self = this
-        const container = document.getElementById(opts.container)        
-        container.innerHTML = this.quotes[opts.startIdx]
-        this.intervalId = setInterval(function() {
-            container.innerHTML = self.rndQuote();
-        }, opts.speed)        
-    },
-
-    stopCycle: function() {
-        clearInterval(this.intervalId)        
+  
+    const rndQuote = () => {
+        return quotes[Math.floor(Math.random() * quotes.length)]
     }
 
+    const cycle = () => {        
+        setIntervalId(setInterval(function() {
+            setCurrentQuote(rndQuote())
+        }, speed))
+    }
+
+    const stopCycle = () => {
+        clearInterval(intervalId)        
+    }
+
+    useEffect(() => {
+        cycle()
+        return function cleanup() {
+            stopCycle()
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    return (
+        <p id="macgquote" className="quote">{currentQuote}</p>
+    )
 }
+
+export default MacGuyver
